@@ -1,0 +1,68 @@
+{
+  "url": "http://127.0.0.1:4178",
+  "timestamp": "2026-07-20T17:13:20.391Z",
+  "totalAssertions": 12,
+  "passedAssertions": 12,
+  "assertions": [
+    {
+      "name": "1. PageLayout is rendered",
+      "passed": true,
+      "details": "Found 1 instances"
+    },
+    {
+      "name": "2. Opening section exists",
+      "passed": true,
+      "details": "Located opening section"
+    },
+    {
+      "name": "3. Artifact section exists",
+      "passed": true,
+      "details": "Located artifact section"
+    },
+    {
+      "name": "4. Contradiction section exists",
+      "passed": true,
+      "details": "Located contradiction section"
+    },
+    {
+      "name": "5. Consequence section exists",
+      "passed": true,
+      "details": "Located consequence section"
+    },
+    {
+      "name": "6. Proof section exists",
+      "passed": true,
+      "details": "Located proof section"
+    },
+    {
+      "name": "7. Three proof images load successfully (1600px width)",
+      "passed": true,
+      "details": "3 images loaded at full width"
+    },
+    {
+      "name": "8. No .proof-placeholder exists",
+      "passed": true,
+      "details": "Found 0 placeholders"
+    },
+    {
+      "name": "9. No image has naturalWidth === 0",
+      "passed": true,
+      "details": "0 broken images"
+    },
+    {
+      "name": "10. No console error occurs",
+      "passed": true,
+      "details": "0 errors: "
+    },
+    {
+      "name": "11. No Vite overlay exists",
+      "passed": true,
+      "details": "Found 0 overlay elements"
+    },
+    {
+      "name": "12. Page has multiple sections for scrolling",
+      "passed": true,
+      "details": "Found 5 sections"
+    }
+  ]
+}

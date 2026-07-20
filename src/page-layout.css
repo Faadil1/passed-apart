@@ -1,0 +1,313 @@
+.page-layout {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #0a0a0a;
+  color: #c0b0a0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  scroll-behavior: smooth;
+  line-height: 1.6;
+}
+
+/* SECTION LAYOUT */
+.section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  box-sizing: border-box;
+}
+
+/* SECTION 1: OPENING */
+.section-opening {
+  background: #0a0a0a;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.opening-content {
+  max-width: 600px;
+  text-align: center;
+}
+
+.opening-title {
+  font-size: 84px;
+  font-weight: 200;
+  letter-spacing: 6px;
+  margin: 0 0 60px 0;
+  color: #d4c4b4;
+  line-height: 1.1;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 40px;
+}
+
+.opening-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 30px;
+  background: linear-gradient(to bottom, #6a5a48, transparent);
+}
+
+.opening-subtitle {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  margin: 0 0 40px 0;
+  color: #7a6a58;
+  text-transform: uppercase;
+}
+
+.opening-problem {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.8px;
+  margin: 0 0 28px 0;
+  color: #b8a898;
+  line-height: 1.7;
+}
+
+.opening-explanation {
+  font-size: 14px;
+  color: #7a6a58;
+  margin: 0;
+  line-height: 1.9;
+  font-weight: 300;
+  letter-spacing: 0.3px;
+}
+
+/* SECTION 2: ARTIFACT */
+.section-artifact {
+  background: #0a0a0a;
+  padding: 80px 60px;
+  min-height: 120vh;
+}
+
+.artifact-frame {
+  width: 100%;
+  max-width: 1600px;
+  aspect-ratio: 16 / 9;
+  background: #0a0a0a;
+  border: 1px solid rgba(166, 152, 128, 0.1);
+  border-radius: 2px;
+}
+
+/* SECTION 3: CONTRADICTION */
+.section-contradiction {
+  background: #0a0a0a;
+  padding: 80px 40px;
+}
+
+.contradiction-content {
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  width: 100%;
+}
+
+.contradiction-block {
+  text-align: left;
+}
+
+.contradiction-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #6a5a48;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+}
+
+.contradiction-text {
+  font-size: 16px;
+  color: #a89880;
+  margin: 0;
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+/* SECTION 4: CONSEQUENCE */
+.section-consequence {
+  background: #0a0a0a;
+  padding: 80px 40px;
+}
+
+.consequence-sequence {
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #a89880;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.consequence-step {
+  padding: 8px 16px;
+  border: 1px solid rgba(166, 152, 128, 0.2);
+  border-radius: 1px;
+  white-space: nowrap;
+}
+
+.consequence-arrow {
+  color: #6a5a48;
+  font-weight: 300;
+}
+
+/* SECTION 5: PROOF */
+.section-proof {
+  background: #0a0a0a;
+  padding: 80px 40px;
+}
+
+.proof-container {
+  width: 100%;
+  max-width: 1600px;
+}
+
+.proof-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  width: 100%;
+}
+
+.proof-state {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.proof-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid rgba(166, 152, 128, 0.1);
+  border-radius: 1px;
+  background: #0a0a0a;
+}
+
+.proof-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #6a5a48;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* RESPONSIVE: TABLET */
+@media (max-width: 1024px) {
+  .section {
+    padding: 60px 32px;
+  }
+
+  .opening-title {
+    font-size: 56px;
+  }
+
+  .opening-problem {
+    font-size: 16px;
+  }
+
+  .contradiction-content {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .proof-strip {
+    gap: 30px;
+  }
+}
+
+/* RESPONSIVE: MOBILE */
+@media (max-width: 640px) {
+  .section {
+    padding: 40px 20px;
+    min-height: auto;
+  }
+
+  .opening-title {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+
+  .opening-problem {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .opening-explanation {
+    font-size: 12px;
+  }
+
+  .section-artifact {
+    padding: 40px 16px;
+    min-height: 80vh;
+  }
+
+  .artifact-frame {
+    aspect-ratio: 390 / 844;
+  }
+
+  .contradiction-content {
+    gap: 40px;
+  }
+
+  .contradiction-label {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .contradiction-text {
+    font-size: 14px;
+  }
+
+  .consequence-sequence {
+    font-size: 14px;
+    gap: 12px;
+  }
+
+  .consequence-step {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .proof-strip {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* ACCESSIBILITY: REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .page-layout {
+    scroll-behavior: auto;
+  }
+}
+
+/* ACCESSIBILITY: HIGH CONTRAST */
+@media (prefers-contrast: more) {
+  .opening-problem {
+    color: #d4c0b0;
+  }
+
+  .contradiction-text {
+    color: #d4c0b0;
+  }
+
+  .consequence-sequence {
+    color: #d4c0b0;
+  }
+}
