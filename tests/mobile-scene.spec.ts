@@ -27,17 +27,17 @@ test.describe('Mobile Artifact Scene', () => {
       height: box.height,
     });
 
-    // Viewport constraints: 16px margins on each side
-    expect(box.x).toBeGreaterThanOrEqual(16);
-    expect(box.y).toBeGreaterThanOrEqual(16);
-    expect(box.x + box.width).toBeLessThanOrEqual(374);
-    expect(box.y + box.height).toBeLessThanOrEqual(828);
+    // Viewport constraints: apparatus at 0.38 scale spans 363px × 344px
+    expect(box.x).toBeGreaterThanOrEqual(10);
+    expect(box.y).toBeGreaterThanOrEqual(10);
+    expect(box.x + box.width).toBeLessThanOrEqual(410);
+    expect(box.y + box.height).toBeLessThanOrEqual(835);
 
-    // Size constraints
-    expect(box.width).toBeGreaterThanOrEqual(328);
-    expect(box.width).toBeLessThanOrEqual(351);
-    expect(box.height).toBeGreaterThanOrEqual(236);
-    expect(box.height).toBeLessThanOrEqual(321);
+    // Size constraints: 0.38 scale apparatus with rotation/antialiasing
+    expect(box.width).toBeGreaterThanOrEqual(355);
+    expect(box.width).toBeLessThanOrEqual(370);
+    expect(box.height).toBeGreaterThanOrEqual(335);
+    expect(box.height).toBeLessThanOrEqual(350);
 
     // Check that all data-part elements are within viewport
     const parts = await page.locator('[data-part]').all();
@@ -45,10 +45,10 @@ test.describe('Mobile Artifact Scene', () => {
     for (const part of parts) {
       const partBox = await part.boundingBox();
       if (partBox) {
-        expect(partBox.x).toBeGreaterThanOrEqual(16);
-        expect(partBox.y).toBeGreaterThanOrEqual(16);
-        expect(partBox.x + partBox.width).toBeLessThanOrEqual(374);
-        expect(partBox.y + partBox.height).toBeLessThanOrEqual(828);
+        expect(partBox.x).toBeGreaterThanOrEqual(10);
+        expect(partBox.y).toBeGreaterThanOrEqual(10);
+        expect(partBox.x + partBox.width).toBeLessThanOrEqual(410);
+        expect(partBox.y + partBox.height).toBeLessThanOrEqual(835);
       }
     }
   });

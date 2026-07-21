@@ -4,22 +4,30 @@ import { ArtifactScene, type ArtifactSceneProps } from './ArtifactScene'
 
 export interface MasterSpineArtifactProps {
   pageMode?: boolean
+  onInteractionStart?: () => void
 }
 
-export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactProps) {
+export function MasterSpineArtifact({ pageMode = false, onInteractionStart }: MasterSpineArtifactProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [dragProgress, setDragProgress] = useState(0)
   const [isPressed, setIsPressed] = useState(false)
-  const [captureMode, setCaptureMode] = useState(false)
   const initialX = useRef(0)
-  const [isMobile, setIsMobile] = useState(false)
+  const hasEmittedInteraction = useRef(false)
 
-  // Verify artifact identity and set up capture mode
+  // Get current URL params
+  const params = new URLSearchParams(window.location.search)
+  const captureParam = params.get('capture')
+  const capturePageParam = params.get('capture-page')
+  const effectiveCaptureParam = capturePageParam || captureParam
+
+  // Derive capture mode and mobile flag from URL
+  const captureMode = !!effectiveCaptureParam
+  const isMobileCapture = effectiveCaptureParam && effectiveCaptureParam.includes('mobile')
+  const isMobile = isMobileCapture || window.innerWidth <= 640
+  const capturePage = effectiveCaptureParam
+
+  // Set document title and validate on first mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const captureParam = params.get('capture')
-
-    // Set document title
     document.title = 'DAY6_MASTER_SPINE_CAPTURE'
 
     // Verify root element has correct attribute
@@ -35,17 +43,8 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
       return
     }
 
-    // Check if mobile viewport
-    const isMobileViewport = window.innerWidth <= 640
-    setIsMobile(isMobileViewport)
-
-    // Check for both legacy capture param and new capture-page param
-    const capturePageParam = params.get('capture-page')
-    const effectiveCaptureParam = capturePageParam || captureParam
-
+    // Set progress based on capture mode
     if (effectiveCaptureParam) {
-      setCaptureMode(true)
-      // Map capture parameter to progress value
       if (effectiveCaptureParam === 'initial' || effectiveCaptureParam === 'artifact-initial' || effectiveCaptureParam === 'mobile-initial') {
         setDragProgress(0.00)
       } else if (effectiveCaptureParam === 'success' || effectiveCaptureParam === 'artifact-success') {
@@ -56,9 +55,17 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
         setDragProgress(0.00)
       }
     }
-  }, [])
+  }, [effectiveCaptureParam])
 
-  // SVG dimensions and coordinate system
+  // Signal that capture is ready (used by capture scripts)
+  useEffect(() => {
+    if (captureMode && containerRef.current) {
+      // Mark as ready after state has settled
+      containerRef.current.setAttribute('data-capture-ready', 'true')
+    }
+  }, [captureMode, dragProgress])
+
+  // Coordinate system and module definitions
   const moduleTopY = 450
   const moduleWidth = 180
   const moduleHeight = 240
@@ -66,7 +73,6 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
   const moduleStartX = 200
   const spineHandleX = moduleStartX - 140
 
-  // Modules array must be defined before landmarks
   const modules = [
     { x: moduleStartX, label: 'M1' },
     { x: moduleStartX + moduleWidth + moduleSpacing, label: 'M2' },
@@ -74,7 +80,7 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
     { x: moduleStartX + 3 * (moduleWidth + moduleSpacing), label: 'M4' },
   ]
 
-  // Geometric landmarks for spine tip travel (depend on modules and spineHandleX)
+  // Geometric landmarks
   const m1EntranceX = modules[0].x
   const m1ExitX = modules[0].x + moduleWidth
   const m2EntranceX = modules[1].x
@@ -82,7 +88,7 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
   const m3EntranceX = modules[2].x
   const initialTipX = spineHandleX + 20
 
-  // Deterministic state interpolation based on spine tip position
+  // State calculation - MUST be defined here before use in module position calculations
   const calculateState = (progress: number) => {
     progress = Math.max(0, Math.min(1, progress))
 
@@ -92,29 +98,20 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
     let gapExpansion = 0
     let spineBend = 0
 
-    // Phase 1 (0.00-0.20): Approach Module 1
     if (progress < 0.2) {
       const phase1 = progress / 0.2
       tipX = initialTipX + (m1EntranceX - initialTipX) * phase1
-    }
-    // Phase 2 (0.20-0.45): Traverse Module 1
-    else if (progress < 0.45) {
+    } else if (progress < 0.45) {
       const phase2 = (progress - 0.2) / 0.25
       tipX = m1EntranceX + (m1ExitX - m1EntranceX) * phase2
-    }
-    // Phase 3 (0.45-0.70): Traverse gap and Module 2
-    else if (progress < 0.7) {
+    } else if (progress < 0.7) {
       const phase3 = (progress - 0.45) / 0.25
       tipX = m1ExitX + (m2ExitX - m1ExitX) * phase3
-    }
-    // Phase 4A (0.70-0.82): Approach Module 3, no deformation
-    else if (progress < 0.82) {
+    } else if (progress < 0.82) {
       const phase4a = (progress - 0.7) / 0.12
       tipX = m2ExitX + (m3EntranceX - m2ExitX) * phase4a
-    }
-    // Phase 4B (0.82-1.00): Contact and bind at Module 3
-    else {
-      tipX = m3EntranceX  // Clamped at entrance
+    } else {
+      tipX = m3EntranceX
       const phase4b = (progress - 0.82) / 0.18
       module2ShiftX = phase4b * 24
       module2RotZ = phase4b * 3.5
@@ -122,13 +119,12 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
       spineBend = phase4b * 6
     }
 
-    // Only deform after Module 3 contact
     const hasContactedModule3 = tipX >= m3EntranceX
     const deformationMultiplier = hasContactedModule3 ? 1 : 0
 
     return {
       tipX,
-      spineX: tipX - 20,  // Spine extends 20 units before tip
+      spineX: tipX - 20,
       module2ShiftX: module2ShiftX * deformationMultiplier,
       module2RotZ: module2RotZ * deformationMultiplier,
       gapExpansion: gapExpansion * deformationMultiplier,
@@ -140,8 +136,26 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
 
   const state = calculateState(dragProgress)
 
+  // Tunnel axis: centered vertically inside each module
+  const tunnelAxisY = moduleTopY + moduleHeight / 2
+  const spineY = tunnelAxisY
+  const misregistrationOffset = 14
+  const apertureWidth = 36
+  const apertureHeight = 36
+
+  // Module 2 and 3 position calculations (now calculateState is defined)
+  const module2BaseX = modules[1].x
+  const module2FinalX = dragProgress >= 0.82 ? module2BaseX + state.module2ShiftX : module2BaseX
+
+  const module3BaseX = modules[2].x
+  const module3FinalX = dragProgress >= 0.82 ? module3BaseX + state.gapExpansion : module3BaseX
+
   const handlePointerDown = (e: React.PointerEvent) => {
     if (captureMode) return
+    if (!hasEmittedInteraction.current && onInteractionStart) {
+      hasEmittedInteraction.current = true
+      onInteractionStart()
+    }
     setIsPressed(true)
     initialX.current = e.clientX
   }
@@ -187,63 +201,8 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [captureMode, pageMode, dragProgress])
 
-  // SVG dimensions
-  const svgWidth = 1600
-  const svgHeight = 900
-
-  // Dynamic viewBox for framing based on capture mode and page context
-  let viewBoxX = 0
-  let viewBoxY = 0
-  let viewBoxWidth = 1600
-  let viewBoxHeight = 900
-  const params = new URLSearchParams(window.location.search)
-  const capturePage = params.get('capture-page')
-
-  // Desktop artifact framing: 78-84% width, 34-42% height
-  if (!isMobile && (capturePage === 'artifact-initial' || capturePage === 'artifact-success' || capturePage === 'artifact-discovery')) {
-    viewBoxX = 50
-    viewBoxY = 320
-    viewBoxWidth = 1300
-    viewBoxHeight = 390
-  }
-
-  // Desktop cover framing: 82-88% width, 36-44% height with full handle visible
-  if (!isMobile && capturePage === 'cover') {
-    viewBoxX = -50  // Add left padding to show full handle
-    viewBoxY = 310
-    viewBoxWidth = 1260  // Slightly wider to include left padding
-    viewBoxHeight = 400
-  }
-
-  // Tunnel axis: centered vertically inside each module
-  const tunnelAxisY = moduleTopY + moduleHeight / 2  // 450 + 120 = 570
-  const spineY = tunnelAxisY // Spine travels along tunnel axis
-
-  // Module 3 misregistration: offset large enough to block shaft
-  const misregistrationOffset = 14  // Causes contact with 12px diameter shaft
-
-  // Aperture dimensions
-  const apertureWidth = 36
-  const apertureHeight = 36
-
-  // Module positions adjust only after Module 3 contact
-  const module2BaseX = modules[1].x
-  const module2FinalX = state.hasContactedModule3 ? module2BaseX + state.module2ShiftX : module2BaseX
-
-  const module3BaseX = modules[2].x
-  const module3FinalX = state.hasContactedModule3 ? module3BaseX + state.gapExpansion : module3BaseX
-
-  // Apparatus bounds for transform calculations
-  const apparatusMinX = spineHandleX - 18  // Left edge of handle
-  const apparatusMaxX = modules[3].x + moduleWidth + 8  // Right edge of Module 4 aperture
-  const apparatusMinY = moduleTopY
-  const apparatusMaxY = moduleTopY + moduleHeight
-  const apparatusCenterX = (apparatusMinX + apparatusMaxX) / 2
-  const apparatusCenterY = (apparatusMinY + apparatusMaxY) / 2
-
-  // Mobile scale and transform
-  const MOBILE_SCALE = 0.3375
-  const mobileSceneProps: ArtifactSceneProps = {
+  // Geometry props for ArtifactScene
+  const geometryProps: ArtifactSceneProps = {
     state,
     modules,
     geometry: {
@@ -268,6 +227,8 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
       module3BaseX,
       module3FinalX,
     },
+    isMobile,
+    capturePage,
   }
 
   return (
@@ -283,116 +244,7 @@ export function MasterSpineArtifact({ pageMode = false }: MasterSpineArtifactPro
       tabIndex={pageMode ? 0 : -1}
       data-artifact="day-06-master-spine"
     >
-      {!isMobile ? (
-        // Desktop rendering - unchanged viewBox framing
-        <svg
-          width={svgWidth}
-          height={svgHeight}
-          viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`}
-          className="artifact-svg"
-          aria-hidden="true"
-        >
-          <defs>
-            {/* Subtle brushed metal texture */}
-            <filter id="noiseFilter">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.5" />
-            </filter>
-
-            {/* Module body gradient - subtle depth */}
-            <linearGradient id="moduleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#8a7f75', stopOpacity: 1}} />
-              <stop offset="50%" style={{stopColor: '#7a7570', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#6a6560', stopOpacity: 1}} />
-            </linearGradient>
-
-            {/* Spine gradient - stronger material definition */}
-            <linearGradient id="spineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#c8b8a8', stopOpacity: 1}} />
-              <stop offset="50%" style={{stopColor: '#b8a898', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#a89880', stopOpacity: 1}} />
-            </linearGradient>
-
-            {/* Contact cavity shadow */}
-            <radialGradient id="contactShadow" cx="50%" cy="30%">
-              <stop offset="0%" style={{stopColor: '#000000', stopOpacity: 0.6}} />
-              <stop offset="100%" style={{stopColor: '#000000', stopOpacity: 0}} />
-            </radialGradient>
-
-            {/* Base gradient */}
-            <linearGradient id="baseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#1a1a1a', stopOpacity: 0.7}} />
-              <stop offset="100%" style={{stopColor: '#0a0a0a', stopOpacity: 0.3}} />
-            </linearGradient>
-
-            {/* Handle gradient */}
-            <linearGradient id="handleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#a89880', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#8a7a68', stopOpacity: 1}} />
-            </linearGradient>
-          </defs>
-
-          {/* Background */}
-          <rect width={svgWidth} height={svgHeight} fill="#0a0a0a" />
-
-          {/* Scene geometry */}
-          <ArtifactScene {...mobileSceneProps} />
-        </svg>
-      ) : (
-        // Mobile rendering - rotated and scaled scene
-        <svg
-          viewBox="0 0 390 844"
-          width={390}
-          height={844}
-          className="artifact-svg mobile-svg"
-          aria-hidden="true"
-        >
-          <defs>
-            {/* Module body gradient - subtle depth */}
-            <linearGradient id="moduleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#8a7f75', stopOpacity: 1}} />
-              <stop offset="50%" style={{stopColor: '#7a7570', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#6a6560', stopOpacity: 1}} />
-            </linearGradient>
-
-            {/* Spine gradient - stronger material definition */}
-            <linearGradient id="spineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#c8b8a8', stopOpacity: 1}} />
-              <stop offset="50%" style={{stopColor: '#b8a898', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#a89880', stopOpacity: 1}} />
-            </linearGradient>
-
-            {/* Contact cavity shadow */}
-            <radialGradient id="contactShadow" cx="50%" cy="30%">
-              <stop offset="0%" style={{stopColor: '#000000', stopOpacity: 0.6}} />
-              <stop offset="100%" style={{stopColor: '#000000', stopOpacity: 0}} />
-            </radialGradient>
-
-            {/* Base gradient */}
-            <linearGradient id="baseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#1a1a1a', stopOpacity: 0.7}} />
-              <stop offset="100%" style={{stopColor: '#0a0a0a', stopOpacity: 0.3}} />
-            </linearGradient>
-
-            {/* Handle gradient */}
-            <linearGradient id="handleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#a89880', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#8a7a68', stopOpacity: 1}} />
-            </linearGradient>
-          </defs>
-
-          {/* Background */}
-          <rect width={390} height={844} fill="#0a0a0a" />
-
-          {/* Mobile scene with rotation and scale transform */}
-          <g
-            id="mobile-artifact-scene"
-            transform={`translate(185 422) rotate(-42) scale(${MOBILE_SCALE}) translate(-${apparatusCenterX} -${apparatusCenterY})`}
-          >
-            <ArtifactScene {...mobileSceneProps} />
-          </g>
-        </svg>
-      )}
+      <ArtifactScene {...geometryProps} />
     </div>
   )
 }

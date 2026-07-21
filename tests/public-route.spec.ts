@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Public Route (no query parameter)', () => {
-  test('desktop: all five sections visible and scrollable', async ({ page }) => {
+  test('desktop: inspection experience all moments visible and scrollable', async ({ page }) => {
     // Desktop viewport
     await page.setViewportSize({ width: 1600, height: 900 });
 
@@ -16,38 +16,42 @@ test.describe('Public Route (no query parameter)', () => {
     console.log(`Body scroll height: ${bodyScrollHeight}px`);
     expect(bodyScrollHeight).toBeGreaterThan(900 * 4);
 
-    // Check all five sections exist
-    const sectionOpening = page.locator('.section-opening');
-    const sectionArtifact = page.locator('.section-artifact');
-    const sectionContradiction = page.locator('.section-contradiction');
-    const sectionConsequence = page.locator('.section-consequence');
-    const sectionProof = page.locator('.section-proof');
+    // Check all five moments exist (new structure)
+    const sectionArtifactHero = page.locator('.section-artifact.hero-section');
+    const sectionCollision = page.locator('.section-collision');
+    const sectionVerdict = page.locator('.section-verdict');
+    const sectionRecords = page.locator('.section-records');
+    const sectionThesis = page.locator('.section-thesis');
 
-    // Verify all sections exist
-    await expect(sectionOpening).toBeVisible();
-    await expect(sectionArtifact).toBeVisible();
-    await expect(sectionContradiction).toBeVisible();
-    await expect(sectionConsequence).toBeVisible();
-    await expect(sectionProof).toBeVisible();
+    // Verify all moments exist
+    await expect(sectionArtifactHero).toBeVisible();
+    await expect(sectionCollision).toBeVisible();
+    await expect(sectionVerdict).toBeVisible();
+    await expect(sectionRecords).toBeVisible();
+    await expect(sectionThesis).toBeVisible();
 
-    // Get bounding boxes and CSS properties for each section
-    const sections = [
-      { name: 'opening', locator: sectionOpening },
-      { name: 'artifact', locator: sectionArtifact },
-      { name: 'contradiction', locator: sectionContradiction },
-      { name: 'consequence', locator: sectionConsequence },
-      { name: 'proof', locator: sectionProof },
+    // Verify invitation text is present on load (disappears after interaction)
+    const invitationText = page.locator('.invitation-text');
+    await expect(invitationText).toBeVisible();
+
+    // Get bounding boxes and CSS properties for each moment
+    const moments = [
+      { name: 'artifact-hero', locator: sectionArtifactHero },
+      { name: 'collision', locator: sectionCollision },
+      { name: 'verdict', locator: sectionVerdict },
+      { name: 'records', locator: sectionRecords },
+      { name: 'thesis', locator: sectionThesis },
     ];
 
-    for (const section of sections) {
-      const box = await section.locator.boundingBox();
-      const display = await section.locator.evaluate(el => window.getComputedStyle(el).display);
-      const visibility = await section.locator.evaluate(el => window.getComputedStyle(el).visibility);
-      const opacity = await section.locator.evaluate(el => window.getComputedStyle(el).opacity);
-      const position = await section.locator.evaluate(el => window.getComputedStyle(el).position);
-      const height = await section.locator.evaluate(el => window.getComputedStyle(el).height);
+    for (const moment of moments) {
+      const box = await moment.locator.boundingBox();
+      const display = await moment.locator.evaluate(el => window.getComputedStyle(el).display);
+      const visibility = await moment.locator.evaluate(el => window.getComputedStyle(el).visibility);
+      const opacity = await moment.locator.evaluate(el => window.getComputedStyle(el).opacity);
+      const position = await moment.locator.evaluate(el => window.getComputedStyle(el).position);
+      const height = await moment.locator.evaluate(el => window.getComputedStyle(el).height);
 
-      console.log(`\n${section.name}:`);
+      console.log(`\n${moment.name}:`);
       console.log(`  box: ${JSON.stringify(box)}`);
       console.log(`  display: ${display}`);
       console.log(`  visibility: ${visibility}`);
@@ -60,27 +64,27 @@ test.describe('Public Route (no query parameter)', () => {
       expect(opacity).toBe('1');
     }
 
-    // Scroll through each section and capture
-    await page.screenshot({ path: 'artifacts/public-validation/desktop-opening.png', fullPage: false });
+    // Scroll through each moment and capture
+    await page.screenshot({ path: 'artifacts/public-validation/desktop-encounter.png', fullPage: false });
 
-    await sectionArtifact.scrollIntoViewIfNeeded();
+    await sectionCollision.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/desktop-artifact.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/desktop-collision.png', fullPage: false });
 
-    await sectionContradiction.scrollIntoViewIfNeeded();
+    await sectionVerdict.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/desktop-contradiction.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/desktop-verdict.png', fullPage: false });
 
-    await sectionConsequence.scrollIntoViewIfNeeded();
+    await sectionRecords.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/desktop-consequence.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/desktop-records.png', fullPage: false });
 
-    await sectionProof.scrollIntoViewIfNeeded();
+    await sectionThesis.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/desktop-proof.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/desktop-thesis.png', fullPage: false });
   });
 
-  test('mobile: all sections visible and scrollable', async ({ page }) => {
+  test('mobile: inspection experience all moments visible and scrollable', async ({ page }) => {
     // Mobile viewport
     await page.setViewportSize({ width: 390, height: 844 });
 
@@ -94,24 +98,28 @@ test.describe('Public Route (no query parameter)', () => {
     const bodyScrollHeight = await page.evaluate(() => document.body.scrollHeight);
     console.log(`Mobile body scroll height: ${bodyScrollHeight}px`);
 
-    // Check all five sections exist
-    const sectionOpening = page.locator('.section-opening');
-    const sectionArtifact = page.locator('.section-artifact');
-    const sectionProof = page.locator('.section-proof');
+    // Check all moments exist on mobile
+    const sectionArtifactHero = page.locator('.section-artifact.hero-section');
+    const sectionCollision = page.locator('.section-collision');
+    const sectionRecords = page.locator('.section-records');
 
-    await expect(sectionOpening).toBeVisible();
-    await expect(sectionArtifact).toBeVisible();
-    await expect(sectionProof).toBeVisible();
+    await expect(sectionArtifactHero).toBeVisible();
+    await expect(sectionCollision).toBeVisible();
+    await expect(sectionRecords).toBeVisible();
 
-    // Capture each section
-    await page.screenshot({ path: 'artifacts/public-validation/mobile-opening.png', fullPage: false });
+    // Verify invitation text is present
+    const invitationText = page.locator('.invitation-text');
+    await expect(invitationText).toBeVisible();
 
-    await sectionArtifact.scrollIntoViewIfNeeded();
+    // Capture each moment
+    await page.screenshot({ path: 'artifacts/public-validation/mobile-encounter.png', fullPage: false });
+
+    await sectionCollision.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/mobile-artifact.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/mobile-collision.png', fullPage: false });
 
-    await sectionProof.scrollIntoViewIfNeeded();
+    await sectionRecords.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: 'artifacts/public-validation/mobile-proof.png', fullPage: false });
+    await page.screenshot({ path: 'artifacts/public-validation/mobile-records.png', fullPage: false });
   });
 });

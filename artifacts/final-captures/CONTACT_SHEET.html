@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 6 Master Spine - Capture Contact Sheet</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: #0a0a0a;
+      color: #c0b0a0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header-info {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #8a7a68;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    .captures {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .capture-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .capture-image {
+      width: 100%;
+      border: 1px solid rgba(166, 152, 128, 0.15);
+      border-radius: 1px;
+      display: block;
+      background: #1a1a1a;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      transition: border-color 0.3s ease;
+    }
+
+    .capture-image:hover {
+      border-color: rgba(166, 152, 128, 0.3);
+    }
+
+    .capture-mobile {
+      aspect-ratio: 390 / 844;
+    }
+
+    .capture-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .capture-name {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #a89880;
+      text-transform: uppercase;
+    }
+
+    .capture-meta {
+      font-size: 12px;
+      color: #6a5a48;
+      line-height: 1.5;
+    }
+
+    .capture-meta strong {
+      color: #8a7a68;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: 1.5px;
+      color: #8a7a68;
+      margin-top: 60px;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(166, 152, 128, 0.1);
+      padding-bottom: 12px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(106, 90, 72, 0.2);
+      color: #8a7a68;
+    }
+
+    .status-badge.fixed {
+      background: rgba(140, 120, 100, 0.2);
+      color: #b8a898;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(166, 152, 128, 0.1);
+      color: #6a5a48;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Master Spine Artifact Captures</h1>
+    <div class="header-info">
+      <p>✓ All 6 artifact captures verified with visual content</p>
+      <p>Desktop (1600×900) • Mobile (390×844)</p>
+    </div>
+
+    <div class="section-title">Desktop Captures (1600×900)</div>
+    <div class="captures">
+      <div class="capture-card">
+        <img src="desktop-artifact-initial.png" alt="Desktop Artifact Initial" class="capture-image">
+        <div class="capture-info">
+          <div class="capture-name">Artifact Initial</div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 0.00<br>
+            <strong>Content:</strong> 18 lines, 2 circles, 23 rects<br>
+            <strong>Size:</strong> 87.5 KB
+          </div>
+        </div>
+      </div>
+
+      <div class="capture-card">
+        <img src="desktop-artifact-success.png" alt="Desktop Artifact Success" class="capture-image">
+        <div class="capture-info">
+          <div class="capture-name">Artifact Success</div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 0.79<br>
+            <strong>Content:</strong> 19 lines, 2 circles, 23 rects<br>
+            <strong>Size:</strong> 87.6 KB
+          </div>
+        </div>
+      </div>
+
+      <div class="capture-card">
+        <img src="desktop-artifact-discovery.png" alt="Desktop Artifact Discovery" class="capture-image">
+        <div class="capture-info">
+          <div class="capture-name">Artifact Discovery <span class="status-badge fixed">Fixed</span></div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 1.00<br>
+            <strong>Content:</strong> 20 lines, 3 circles, 24 rects<br>
+            <strong>Size:</strong> 87.8 KB
+          </div>
+        </div>
+      </div>
+
+      <div class="capture-card">
+        <img src="desktop-cover.png" alt="Desktop Cover" class="capture-image">
+        <div class="capture-info">
+          <div class="capture-name">Cover <span class="status-badge fixed">Fixed</span></div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 1.00<br>
+            <strong>Content:</strong> 20 lines, 3 circles, 24 rects<br>
+            <strong>Size:</strong> 100.1 KB
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Mobile Captures (390×844)</div>
+    <div class="captures">
+      <div class="capture-card">
+        <img src="mobile-initial.png" alt="Mobile Initial" class="capture-image capture-mobile">
+        <div class="capture-info">
+          <div class="capture-name">Mobile Initial</div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 0.00<br>
+            <strong>Content:</strong> 18 lines, 2 circles, 23 rects<br>
+            <strong>Size:</strong> 27.2 KB
+          </div>
+        </div>
+      </div>
+
+      <div class="capture-card">
+        <img src="mobile-discovery.png" alt="Mobile Discovery" class="capture-image capture-mobile">
+        <div class="capture-info">
+          <div class="capture-name">Mobile Discovery <span class="status-badge fixed">Fixed</span></div>
+          <div class="capture-meta">
+            <strong>State:</strong> dragProgress 1.00<br>
+            <strong>Content:</strong> 20 lines, 3 circles, 24 rects<br>
+            <strong>Size:</strong> 28.1 KB
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p><strong>Capture State Correctness Pass Complete</strong></p>
+      <p>✓ Bug fixed: calculateState hoisting issue resolved</p>
+      <p>✓ All captures verified: No blank/empty outputs</p>
+      <p>✓ Visual content confirmed: Element counts match expected rendering</p>
+      <p>✓ DOM state verified: dragProgress values correct for each capture</p>
+      <p>✓ Test suite: 15 passing</p>
+      <p style="margin-top: 20px; color: #5a4a38;">Generated: 2026-07-20 • Not committed</p>
+    </div>
+  </div>
+</body>
+</html>
